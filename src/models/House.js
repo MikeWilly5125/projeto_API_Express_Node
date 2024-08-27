@@ -10,7 +10,16 @@ const HouseSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+},
+{
+    toJSON: {
+        virtuals: true
+    }
 });
+
+HouseSchema.virtual('thumbnail_url').get(function(){
+    return `https://www.localhost3000/fliles/${this.thumbnail}`;
+})
 
 
 
