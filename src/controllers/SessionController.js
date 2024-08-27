@@ -8,23 +8,29 @@ update: Quando qyeremos atualizar/alterar alguma sessao
 destroy: Quando queremos deletar uma sessao
 */
 
-import User from "../models/User"
-
+import User from "../models/User";
+import * as Yup from 'yup';
 class SessionController{
 
     async store(req, res){
-     // const email = req.body.email
-      const {email} = req.body //Desconstrução javaScript
+      const schema = Yup.object().shape({
+        email: Yup.string().required().email()
+      });
 
-    //   Verificando se esse usuário ja existe
-      let user = await User.findOne({email})
+      const {email} = req.body; //Desconstrução javaScript
+
+      if(!(await schema.isValid(req.body))){
+        return res.status(400).json({error: "Falha na validação"});
+      };
+
+      //Verificando se esse usuário ja existe
+      let user = await User.findOne({email});
 
       if(!user){
-
        user = await User.create({email});
       }
 
-        return res.json(user)
+      return res.json(user)
     }
 
 }
